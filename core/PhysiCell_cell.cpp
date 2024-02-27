@@ -610,7 +610,10 @@ Cell* Cell::divide( )
 	child->assign_position(position[0] + rand_vec[0],
 						   position[1] + rand_vec[1],
 						   position[2] + rand_vec[2]);
-						 
+	// child->assign_position(position[0] + 5,
+	// 					   position[1] + 0,
+	// 					   position[2] + 0);
+
 	//change my position to keep the center of mass intact 
 	// and then see if I need to update my voxel index
 	static double negative_one_half = -0.5; 
