@@ -29,3 +29,4 @@ addons/PhysiBoSS/libMaBoSS-*.tar.gz
 #user_projects/*
 !user_projects/empty.txt
 output/*
+studio_debug.log
