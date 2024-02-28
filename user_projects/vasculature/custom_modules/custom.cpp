@@ -126,6 +126,12 @@ void create_cell_types( void )
 	cell_defaults.functions.update_phenotype = phenotype_function; 
 	cell_defaults.functions.custom_cell_rule = custom_function; 
 	cell_defaults.functions.contact_function = contact_function; 
+
+	Cell_Definition* pCD = find_cell_definition( "tip cell"); 
+	pCD->phenotype.mechanics.maximum_number_of_attachments = 1; 
+	
+	pCD = find_cell_definition( "stalk cell"); 
+	pCD->phenotype.mechanics.maximum_number_of_attachments = 2;
 	
 	/*
 	   This builds the map of cell definitions and summarizes the setup. 
