@@ -610,14 +610,25 @@ Cell* Cell::divide( )
 	child->assign_position(position[0] + rand_vec[0],
 						   position[1] + rand_vec[1],
 						   position[2] + rand_vec[2]);
-	// child->assign_position(position[0] + 5,
-	// 					   position[1] + 0,
-	// 					   position[2] + 0);
 
 	//change my position to keep the center of mass intact 
 	// and then see if I need to update my voxel index
 	static double negative_one_half = -0.5; 
 	axpy( &position, negative_one_half , rand_vec ); // position = position - 0.5*rand_vec; 
+
+	//**********************TEST ALIGNEMENT GRADIENT**********************
+	// get VEGF (idx=0) gradient at cell position -> to be included in cell_division_orientation
+	std::vector<double>& VEGF_gradient = this->nearest_gradient(0);
+	child->assign_position(position[0] + VEGF_gradient[0],
+						   position[1] + VEGF_gradient[1],
+						   position[2] + VEGF_gradient[2]);
+	axpy( &position, -1 , VEGF_gradient );
+	std::vector<double> x_dir = {phenotype.geometry.radius, 0.0, 0.0};
+	child->assign_position(position[0] + x_dir[0],
+						   position[1] + x_dir[1],
+						   position[2] + x_dir[2]);
+	axpy( &position, -1 , x_dir );
+	//**********************TEST ALIGNEMENT GRADIENT**********************
 
 	//If this cell has been moved outside of the boundaries, mark it as such.
 	//(If the child cell is outside of the boundaries, that has been taken care of in the assign_position function.)
