@@ -93,6 +93,18 @@ void PhysiMeSS_Fibre::assign_fibre_orientation()
         this->state.orientation[1] = 0.0;
         this->state.orientation[2] = 0.0;
     }
+    if (this->type_name == "fibre_plus60") {
+        double pi = 3.14159265;
+        this->state.orientation[0] = sin(pi/3);
+        this->state.orientation[1] = cos(pi/3);
+        this->state.orientation[2] = 0.0;
+    }
+    if (this->type_name == "fibre_minus60") {
+        double pi = 3.14159265;
+        this->state.orientation[0] = sin(pi/3);
+        this->state.orientation[1] = -cos(pi/3);
+        this->state.orientation[2] = 0.0;
+    }
     //###########################################// 
 }
 
