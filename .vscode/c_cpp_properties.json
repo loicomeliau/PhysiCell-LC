@@ -10,6 +10,29 @@
             "cStandard": "c17",
             "cppStandard": "gnu++23",
             "intelliSenseMode": "linux-gcc-x64"
+        },
+        {
+            "name": "MacOS",
+            "includePath": [
+                "/Users/loicomeliau/Documents/GitHub/PhysiCell-LC/**"
+            ],
+            "defines": [],
+            "macFrameworkPath": [
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+            ],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-clang-arm64",
+            "compilerPathInCppPropertiesJson": "/usr/bin/clang",
+            "mergeConfigurations": false,
+            "browse": {
+                "path": [
+                    "/Users/loicomeliau/Documents/GitHub/PhysiCell-LC/**",
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
         }
     ],
     "version": 4
