@@ -1,0 +1,6 @@
+cancer,pressure,decreases,cycle entry,0,1,4,0
+cancer,dead,increases,debris secretion,1,0.5,8,1
+APC,contact with cancer,increases,custom:intravasation_rate,0.001,0.5,8,1
+APC,custom:intravasation_rate,increases,cycle entry,0.0001,0.0005,8,0
+APC,custom:intravasation_rate,increases,pro-inflammatory factor secretion,10,0.0005,8,0
+cancer,damage,increases,apoptosis,0.01,5,4,0
