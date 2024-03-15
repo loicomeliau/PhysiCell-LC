@@ -204,13 +204,69 @@ void setup_tissue( void )
 }
 
 std::vector<std::string> my_coloring_function( Cell* pCell )
-{ return paint_by_number_cell_coloring(pCell); }
+{ 
+	if( pCell->state.number_of_attached_cells() == 0 )
+	{ return { "grey", "black", "grey", "grey"}; }
 
+	if( pCell->state.number_of_attached_cells() == 1 )
+	{		
+		return { "orange", "black", "orange", "orange"}; 
+	}
+
+	if( pCell->state.number_of_attached_cells() >= 2 )
+	{
+		return { "blue" , "black", "blue", "blue"}; 	
+	}
+
+	if( pCell->state.number_of_attached_cells() >= 2 )
+	{
+		return { "red" , "black", "red", "red"}; 	
+	}
+
+	return { "yellow", "black", "yellow", "yellow" }; 
+}
+
+// Phenotype update functions
+// Default phenotype function
 void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt )
-{ return; }
+{ 
+	// O2 based update - IF oxygen used as substrate - Maybe add condition on cell cycle
+	// valid for: advanced_Ki67_cycle_model=0 / basic_Ki67_cycle_model=1 / live_cells_cycle_model=5; 
+	// if (pCell->get_microenvironment()->find_density_index( "oxygen" ) != -1)
+	// {
+	// 	update_cell_and_death_parameters_O2_based(pCell, phenotype, dt);
+	// }
 
+	return; 
+}
+
+// Prepare for endothelial cell phenotype
+void endothelial_cell_phenotype( Cell* pCell, Phenotype& phenotype, double dt )
+{ 
+	// O2 based update - IF oxygen used as substrate
+	// advanced_Ki67_cycle_model= 0 / basic_Ki67_cycle_model=1 / live_cells_cycle_model = 5; 
+	// if (pCell->get_microenvironment()->find_density_index( "oxygen" ) != -1)
+	// {
+	// 	update_cell_and_death_parameters_O2_based(pCell, phenotype, dt);
+	// }
+	
+
+	// Custom endothelial cell phenotype update
+	// ...
+
+	return; 
+}
+
+// Custom functions
+// Default custom function
 void custom_function( Cell* pCell, Phenotype& phenotype , double dt )
 { return; } 
 
+// Contact function
+// Default contact function
 void contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& phenoOther , double dt )
+{ return; } 
+
+// Endothelial cell contact function
+void endothelial_cell_contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& phenoOther , double dt )
 { return; } 

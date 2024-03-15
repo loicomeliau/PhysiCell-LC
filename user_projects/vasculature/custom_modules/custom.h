@@ -85,8 +85,13 @@ std::vector<std::string> my_coloring_function( Cell* );
 
 // custom functions can go here 
 
+// Phenotype update functions
 void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt );
+void endothelial_cell_phenotype( Cell* pCell, Phenotype& phenotype, double dt );
+
+// Custom function (udpate at mechanics_dt)
 void custom_function( Cell* pCell, Phenotype& phenotype , double dt );
 
+// Endothelial cell contact function (udpate at mechanics_dt)
 void contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& phenoOther , double dt ); 
-
+void endothelial_cell_contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& phenoOther , double dt ); 
