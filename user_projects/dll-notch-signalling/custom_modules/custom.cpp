@@ -92,7 +92,7 @@ void create_cell_types( void )
 	cell_defaults.functions.update_velocity = NULL;
 	cell_defaults.functions.update_phenotype = NULL; 
 	cell_defaults.functions.update_migration_bias = NULL; 
-	cell_defaults.functions.pre_update_intracellular = pre_update_intracellular; 
+	cell_defaults.functions.pre_update_intracellular = NULL; 
 	cell_defaults.functions.post_update_intracellular = post_update_intracellular; 
 	cell_defaults.functions.custom_cell_rule = NULL; 
 	

@@ -1,29 +1,20 @@
 <PhysiCell_settings version="devel-version">
 
-    <cell_rules>
-        <rulesets>
-            <ruleset protocol="CBHG" version="2.0" format="csv" enabled="true">
-                <folder>config</folder>
-                <filename>rules.csv</filename>
-            </ruleset>
-        </rulesets>
-    </cell_rules>
-
     <domain>
         <x_min>-200</x_min>
         <x_max>200</x_max>
         <y_min>-100</y_min>
         <y_max>100</y_max>
-        <z_min>-20</z_min>
-        <z_max>20</z_max>
+        <z_min>-10</z_min>
+        <z_max>10</z_max>
         <dx>20</dx>
         <dy>20</dy>
         <dz>20</dz>
-        <use_2D>false</use_2D>
+        <use_2D>true</use_2D>
     </domain>
 
     <overall>
-        <max_time units="min">200</max_time>
+        <max_time units="min">1440</max_time>
         <time_units>min</time_units>
         <space_units>micron</space_units>
         <dt_diffusion units="min">0.01</dt_diffusion>
@@ -38,11 +29,11 @@
     <save>
         <folder>output</folder>
         <full_data>
-            <interval units="min">10</interval>
+            <interval units="min">60</interval>
             <enable>true</enable>
         </full_data>
         <SVG>
-            <interval units="min">10</interval>
+            <interval units="min">60</interval>
             <enable>true</enable>
             <plot_substrate enabled="false" limits="false">
                 <substrate>VEGF</substrate>
@@ -51,7 +42,7 @@
             </plot_substrate>
         </SVG>
         <legacy_data>
-            <enable>true</enable>
+            <enable>false</enable>
         </legacy_data>
     </save>
 
@@ -173,14 +164,14 @@
                 </mechanics>
                 <motility>
                     <speed units="micron/min">0.0</speed>
-                    <persistence_time units="min">5</persistence_time>
-                    <migration_bias units="dimensionless">0.5</migration_bias>
+                    <persistence_time units="min">1.0</persistence_time>
+                    <migration_bias units="dimensionless">0.0</migration_bias>
                     <options>
                         <enabled>false</enabled>
                         <use_2D>true</use_2D>
                         <chemotaxis>
                             <enabled>false</enabled>
-                            <substrate>oxygen</substrate>
+                            <substrate>VEGF</substrate>
                             <direction>1</direction>
                         </chemotaxis>
                         <advanced_chemotaxis>
