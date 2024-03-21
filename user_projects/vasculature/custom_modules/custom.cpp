@@ -205,20 +205,20 @@ void setup_tissue( void )
 
 std::vector<std::string> my_coloring_function( Cell* pCell )
 { 
-	if( pCell->state.number_of_attached_cells() == 0 )
+	if( pCell->state.spring_attachments.size() == 0 )
 	{ return { "grey", "black", "grey", "grey"}; }
 
-	if( pCell->state.number_of_attached_cells() == 1 )
+	if( pCell->state.spring_attachments.size() == 1 )
 	{		
 		return { "orange", "black", "orange", "orange"}; 
 	}
 
-	if( pCell->state.number_of_attached_cells() >= 2 )
-	{
-		return { "blue" , "black", "blue", "blue"}; 	
-	}
+	// if( pCell->state.spring_attachments.size() == 2 )
+	// {
+	// 	return { "blue" , "black", "blue", "blue"}; 	
+	// }
 
-	if( pCell->state.number_of_attached_cells() >= 2 )
+	if( pCell->state.spring_attachments.size() >= 2 )
 	{
 		return { "red" , "black", "red", "red"}; 	
 	}
