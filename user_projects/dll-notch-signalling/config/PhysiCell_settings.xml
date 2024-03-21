@@ -152,7 +152,7 @@
                     <cell_cell_repulsion_strength units="micron/min">10.0</cell_cell_repulsion_strength>
                     <relative_maximum_adhesion_distance units="dimensionless">1.25</relative_maximum_adhesion_distance>
                     <cell_adhesion_affinities>
-                        <cell_adhesion_affinity name="endothelial_cell">1.0</cell_adhesion_affinity>
+                        <cell_adhesion_affinity name="endothelial_cell">0.5</cell_adhesion_affinity>
                     </cell_adhesion_affinities>
                     <options>
                         <set_relative_equilibrium_distance enabled="false" units="dimensionless">1.8</set_relative_equilibrium_distance>
@@ -171,7 +171,7 @@
                         <use_2D>true</use_2D>
                         <chemotaxis>
                             <enabled>false</enabled>
-                            <substrate>oxygen</substrate>
+                            <substrate>VEGF</substrate>
                             <direction>1</direction>
                         </chemotaxis>
                         <advanced_chemotaxis>
@@ -250,6 +250,7 @@
             </phenotype>
             <custom_data>
                 <DLL_neighbour conserved="false" units="dimensionless" description="">0.0</DLL_neighbour>
+                <maximum_number_of_attachments conserved="false" units="dimensionless" description="">2</maximum_number_of_attachments>
             </custom_data>
         </cell_definition>
     </cell_definitions>
@@ -274,6 +275,6 @@
     <user_parameters>
         <random_seed type="int" units="dimensionless" description="">0</random_seed>
         <node_to_visualize type="string" units="none" description="">DLL</node_to_visualize>
-        <number_of_cells type="int" units="dimensionless" description="">0</number_of_cells>
+        <number_of_cells type="int" units="none" description="initial number of cells (for each cell type)">0</number_of_cells>
     </user_parameters>
 </PhysiCell_settings>

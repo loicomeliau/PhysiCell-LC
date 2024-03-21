@@ -74,7 +74,8 @@
 #include <fstream>
 
 #include "./core/PhysiCell.h"
-#include "./modules/PhysiCell_standard_modules.h" 
+#include "./modules/PhysiCell_standard_modules.h"
+
 // put custom code modules here! 
 
 #include "./custom_modules/custom.h" 
