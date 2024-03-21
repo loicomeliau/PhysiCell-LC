@@ -241,20 +241,22 @@ std::vector<std::string> my_coloring_function( Cell* pCell )
 		output[2] = "rgb(0, 125,0)";
 	}
 
-	if ( pCell->state.number_of_attached_cells() >= 1 )
+	if ( pCell->state.spring_attachments.size() == 1 )
 	{
-		output[0] = "rgb(255,0,0)";
-		output[2] = "rgb(125,0,0)";
+		// output[0] = "rgb(255,0,0)";
+		// output[2] = "rgb(125,0,0)";
+		output = { "orange", "black", "orange", "orange"};
 	}
-	else if ( pCell->state.number_of_attached_cells() == 2 )
+	else if ( pCell->state.spring_attachments.size() == 2 )
 	{
-		output[0] = "rgb(255,0,0)";
-		output[2] = "rgb(125,0,0)";
+		output[0] = "rgb(0,255,0)";
+		output[2] = "rgb(0,125,0)";
 	}
 	else
 	{
-		output[0] = "rgb(0,0,255)";
-		output[2] = "rgb(0,0,125)";
+		// output[0] = "rgb(0,0,255)";
+		// output[2] = "rgb(0,0,125)";
+		output = { "grey", "black", "grey", "grey"};
 	}
 	
 	return output;

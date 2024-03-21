@@ -148,7 +148,7 @@
                     <relative_rupture_volume units="dimensionless">2</relative_rupture_volume>
                 </volume>
                 <mechanics>
-                    <cell_cell_adhesion_strength units="micron/min">0.01</cell_cell_adhesion_strength>
+                    <cell_cell_adhesion_strength units="micron/min">0.4</cell_cell_adhesion_strength>
                     <cell_cell_repulsion_strength units="micron/min">10.0</cell_cell_repulsion_strength>
                     <relative_maximum_adhesion_distance units="dimensionless">1.25</relative_maximum_adhesion_distance>
                     <cell_adhesion_affinities>
@@ -160,7 +160,7 @@
                     </options>
                     <attachment_elastic_constant units="1/min">0.01</attachment_elastic_constant>
                     <attachment_rate units="1/min">0.5</attachment_rate>
-                    <detachment_rate units="1/min">0.0</detachment_rate>
+                    <detachment_rate units="1/min">0.0001</detachment_rate>
                 </mechanics>
                 <motility>
                     <speed units="micron/min">0.0</speed>
