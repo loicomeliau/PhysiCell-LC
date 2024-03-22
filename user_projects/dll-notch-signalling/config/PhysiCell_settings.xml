@@ -14,7 +14,7 @@
     </domain>
 
     <overall>
-        <max_time units="min">1440</max_time>
+        <max_time units="min">5760.0</max_time>
         <time_units>min</time_units>
         <space_units>micron</space_units>
         <dt_diffusion units="min">0.01</dt_diffusion>
@@ -171,7 +171,7 @@
                         <use_2D>true</use_2D>
                         <chemotaxis>
                             <enabled>false</enabled>
-                            <substrate>VEGF</substrate>
+                            <substrate>oxygen</substrate>
                             <direction>1</direction>
                         </chemotaxis>
                         <advanced_chemotaxis>
@@ -225,7 +225,7 @@
                     </initial_values>
                     <settings>
                         <intracellular_dt>1</intracellular_dt>
-                        <time_stochasticity>0.0</time_stochasticity>
+                        <time_stochasticity>0.5</time_stochasticity>
                         <scaling>1.0</scaling>
                         <start_time>0.0</start_time>
                         <inheritance global="False" />
@@ -241,7 +241,7 @@
                         <input physicell_name="custom:DLL_neighbour" intracellular_name="DLL_neighbour">
                             <settings>
                                 <action>activation</action>
-                                <threshold>5</threshold>
+                                <threshold>0.5</threshold>
                                 <smoothing>0</smoothing>
                             </settings>
                         </input>

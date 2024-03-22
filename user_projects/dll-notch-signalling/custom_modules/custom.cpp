@@ -139,7 +139,8 @@ void create_cell_types( void )
 	cell_defaults.functions.contact_function = NULL; 
 
 	Cell_Definition* pCD = find_cell_definition( "endothelial_cell"); 
-	pCD->phenotype.mechanics.maximum_number_of_attachments = 2; 
+	pCD->phenotype.mechanics.maximum_number_of_attachments = 2;
+	pCD->functions.custom_cell_rule = custom_function;
 	
 	/*
 	   This builds the map of cell definitions and summarizes the setup. 
@@ -265,4 +266,42 @@ std::vector<std::string> my_coloring_function( Cell* pCell )
 void color_node(Cell* pCell){
 	std::string node_name = parameters.strings("node_to_visualize");
 	pCell->custom_data[node_name] = pCell->phenotype.intracellular->get_boolean_variable_value(node_name);
+}
+
+// Custom functions
+// Default custom function
+void custom_function( Cell* pCell, Phenotype& phenotype , double dt )
+{
+	// Juxtacrine communication - Update of the state of DLL_neighbour
+	double DLL_neighbour_tot;
+	int nb_of_attachments = pCell->state.spring_attachments.size();
+
+	for( int i=0; i < nb_of_attachments; i++ )
+	{
+		Cell* pNeighbour = pCell->state.spring_attachments[i];
+		DLL_neighbour_tot = pNeighbour->phenotype.intracellular->get_boolean_variable_value("DLL");
+	}
+
+	pCell->custom_data["DLL_neighbour"] = DLL_neighbour_tot / nb_of_attachments;
+
+	std::cout << std::endl << "Number of attached cells: " << nb_of_attachments << " and total DLL_neighbour: " << DLL_neighbour_tot << std::endl;
+
+	return;
+} 
+
+void endothelial_cell_contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& phenoOther , double dt )
+{
+	double head_me = pMe->custom_data["head"];
+	double head_other = pOther->custom_data["head"];
+		
+	// make the transfer 
+	if( head_me > head_other )
+	{
+		double amount_to_transfer = dt * pMe->custom_data["transfer_rate"] 
+			* (head_me - head_other ); 
+		pMe->custom_data["head"] -= amount_to_transfer; 
+		#pragma omp critical
+		{ pOther->custom_data["head"] += amount_to_transfer; }
+	}
+	return;
 }
