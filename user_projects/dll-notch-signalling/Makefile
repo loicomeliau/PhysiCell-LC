@@ -228,6 +228,8 @@ reset:
 	cp ./config/PhysiCell_settings-backup.xml ./config/PhysiCell_settings.xml 
 	rm -rf ./config/boolean_network/
 	rm -f ./config/*.csv
+	rm -f ./config/*.bnd
+	rm -f ./config/*.cfg
 	touch ./config/empty.csv
 	rm -rf ./scripts
 
