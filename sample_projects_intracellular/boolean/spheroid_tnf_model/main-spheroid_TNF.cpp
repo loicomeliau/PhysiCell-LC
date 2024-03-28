@@ -75,10 +75,8 @@
 
 #include "./core/PhysiCell.h"
 #include "./modules/PhysiCell_standard_modules.h" 
-// put custom code modules here! 
-
-#include "./custom_modules/custom.h" 
 #include "./addons/PhysiBoSS/src/maboss_intracellular.h"	
+#include "./custom_modules/custom.h" 
 
 using namespace BioFVM;
 using namespace PhysiCell;
@@ -90,13 +88,13 @@ int main( int argc, char* argv[] )
 	bool XML_status = false; 
 	char copy_command [1024]; 
 	if( argc > 1 )
-	{
+	{ 
 		XML_status = load_PhysiCell_config_file( argv[1] ); 
 		sprintf( copy_command , "cp %s %s" , argv[1] , PhysiCell_settings.folder.c_str() ); 
-	}
+		}
 	else
-	{
-		XML_status = load_PhysiCell_config_file( "./config/PhysiCell_settings.xml" );
+	{ 
+		XML_status = load_PhysiCell_config_file( "./config/PhysiCell_settings.xml" ); 
 		sprintf( copy_command , "cp ./config/PhysiCell_settings.xml %s" , PhysiCell_settings.folder.c_str() ); 
 	}
 	if( !XML_status )
@@ -104,12 +102,12 @@ int main( int argc, char* argv[] )
 	
 	// copy config file to output directry 
 	system( copy_command ); 
-	
+
 	// OpenMP setup
 	omp_set_num_threads(PhysiCell_settings.omp_num_threads);
 	
 	// PNRG setup 
-	SeedRandom(); 
+	SeedRandom( parameters.ints("random_seed") ); // or specify a seed here
 	
 	// time setup 
 	std::string time_units = "min"; 
@@ -117,19 +115,32 @@ int main( int argc, char* argv[] )
 	/* Microenvironment setup */ 
 	
 	setup_microenvironment(); // modify this in the custom code 
+
+	// User parameters
 	
+	double tnf_pulse_period = parameters.doubles("tnf_pulse_period");
+	double tnf_pulse_duration = parameters.doubles("tnf_pulse_duration");
+	double tnf_pulse_concentration = parameters.doubles("tnf_pulse_concentration");
+	double time_remove_tnf = parameters.doubles("time_remove_tnf");
+	double membrane_lenght = parameters.doubles("membrane_length"); // radious around which the tnf pulse is injected
+	
+	// double tnf_pulse_timer = tnf_pulse_period;
+	// double tnf_pulse_injection_timer = -1;
+
+	double tnf_pulse_timer = tnf_pulse_period;
+	double tnf_pulse_injection_timer = -1;
+	static int tnf_idx = microenvironment.find_density_index("tnf");	
+
+
 	/* PhysiCell setup */ 
  	
 	// set mechanics voxel size, and match the data structure to BioFVM
-	double mechanics_voxel_size = 10; 
+	double mechanics_voxel_size = 20; 
 	Cell_Container* cell_container = create_cell_container_for_microenvironment( microenvironment, mechanics_voxel_size );
 	
 	/* Users typically start modifying here. START USERMODS */ 
-	
 	create_cell_types();
-	
 	setup_tissue();
-
 
 	/* Users typically stop modifying here. END USERMODS */ 
 	
@@ -142,12 +153,10 @@ int main( int argc, char* argv[] )
 	
 	// save a simulation snapshot 
 	
-	//mkdir("../output");
-
 	char filename[1024];
 	sprintf( filename , "%s/initial" , PhysiCell_settings.folder.c_str() ); 
 	
-	save_PhysiCell_to_MultiCellDS_v2( filename , microenvironment , PhysiCell_globals.current_time ); 
+	save_PhysiCell_to_MultiCellDS_xml_pugi( filename , microenvironment , PhysiCell_globals.current_time ); 
 	
 	sprintf( filename , "%s/states_initial.csv", PhysiCell_settings.folder.c_str());
 	MaBoSSIntracellular::save( filename, *PhysiCell::all_cells);
@@ -167,7 +176,7 @@ int main( int argc, char* argv[] )
 	sprintf( filename , "%s/legend.svg" , PhysiCell_settings.folder.c_str() ); 
 	create_plot_legend( filename , cell_coloring_function ); 
 	
-	add_software_citation( "PhysiBoSS" , PhysiBoSS_Version , PhysiBoSS_DOI, PhysiBoSS_URL); 
+	add_software_citation( "PhysiBoSS" , PhysiBoSS_Version , PhysiBoSS_DOI, PhysiBoSS_URL);  
 	
 	display_citations(); 
 	
@@ -185,8 +194,7 @@ int main( int argc, char* argv[] )
 		report_file<<"simulated time\tnum cells\tnum division\tnum death\twall time"<<std::endl;
 	}
 	
-	// main loop 
-	
+	// main loop
 	try 
 	{		
 		while( PhysiCell_globals.current_time < PhysiCell_settings.max_time + 0.1*diffusion_dt )
@@ -194,22 +202,34 @@ int main( int argc, char* argv[] )
 			// save data if it's time. 
 			if( fabs( PhysiCell_globals.current_time - PhysiCell_globals.next_full_save_time ) < 0.01 * diffusion_dt )
 			{
+				std::cout << "Time to save" << std::endl;
 				display_simulation_status( std::cout ); 
 				if( PhysiCell_settings.enable_legacy_saves == true )
 				{	
 					log_output( PhysiCell_globals.current_time , PhysiCell_globals.full_output_index, microenvironment, report_file);
+					//Count Necrotic Apoptotic Alive cells
+					// Producer
+					std::string message;
+					std::string topic_name = "cells";
+					double timepoint = PhysiCell_globals.current_time;
+					int alive_no,necrotic_no,apoptotic_no=0;
+					alive_no = total_live_cell_count();
+					necrotic_no = total_necrosis_cell_count();
+					apoptotic_no = total_dead_cell_count();
+					pid_t pid_var = getpid();
+					message = std::to_string(pid_var) + ';' + std::to_string(timepoint) + ';' + std::to_string(alive_no) + ';' + std::to_string(apoptotic_no) + ';' + std::to_string(necrotic_no) + ';';
 				}
 				
 				if( PhysiCell_settings.enable_full_saves == true )
 				{	
 					sprintf( filename , "%s/output%08u" , PhysiCell_settings.folder.c_str(),  PhysiCell_globals.full_output_index ); 
 					
-					save_PhysiCell_to_MultiCellDS_v2( filename , microenvironment , PhysiCell_globals.current_time ); 
+					save_PhysiCell_to_MultiCellDS_xml_pugi( filename , microenvironment , PhysiCell_globals.current_time ); 
 					
 					sprintf( filename , "%s/states_%08u.csv", PhysiCell_settings.folder.c_str(), PhysiCell_globals.full_output_index);
 					
 					MaBoSSIntracellular::save( filename, *PhysiCell::all_cells );
-	
+					
 				}
 				
 				PhysiCell_globals.full_output_index++; 
@@ -231,16 +251,32 @@ int main( int argc, char* argv[] )
 
 			/*
 			  Custom add-ons could potentially go here. 
-			*/
+			*/			
+			if ( PhysiCell_globals.current_time >= tnf_pulse_timer )
+			{
+				tnf_pulse_injection_timer = PhysiCell_globals.current_time + tnf_pulse_duration;
+				tnf_pulse_timer += tnf_pulse_period;
+			}
 
+			if ( PhysiCell_globals.current_time <= tnf_pulse_injection_timer )
+			{
+				inject_density_sphere(tnf_idx, tnf_pulse_concentration, membrane_lenght);
+			}
+
+			if ( PhysiCell_globals.current_time >= time_remove_tnf )
+			{
+				remove_density(tnf_idx);
+				time_remove_tnf += PhysiCell_settings.max_time;
+			}
 
 			// update the microenvironment
 			microenvironment.simulate_diffusion_decay( diffusion_dt );
 			
+			// update te TNF receptor model of each cell
+			tnf_receptor_model_main( diffusion_dt );
+			
 			// run PhysiCell 
 			((Cell_Container *)microenvironment.agent_container)->update_all_cells( PhysiCell_globals.current_time );
-			
-			//std::cout<< "done" << std::endl;
 			
 			PhysiCell_globals.current_time += diffusion_dt;
 		}
@@ -259,7 +295,7 @@ int main( int argc, char* argv[] )
 	// save a final simulation snapshot 
 	
 	sprintf( filename , "%s/final" , PhysiCell_settings.folder.c_str() ); 
-	save_PhysiCell_to_MultiCellDS_v2( filename , microenvironment , PhysiCell_globals.current_time ); 
+	save_PhysiCell_to_MultiCellDS_xml_pugi( filename , microenvironment , PhysiCell_globals.current_time ); 
 	
 	sprintf( filename , "%s/states_final.csv", PhysiCell_settings.folder.c_str());
 	MaBoSSIntracellular::save( filename, *PhysiCell::all_cells );
