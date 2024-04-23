@@ -128,10 +128,10 @@ void create_cell_types( void )
 	cell_defaults.functions.contact_function = contact_function; 
 
 	Cell_Definition* pCD = find_cell_definition( "tip cell"); 
-	pCD->phenotype.mechanics.maximum_number_of_attachments = 1; 
+	pCD->phenotype.mechanics.maximum_number_of_attachments = pCD->custom_data["maximum_number_of_attachments"];
 	
 	pCD = find_cell_definition( "stalk cell"); 
-	pCD->phenotype.mechanics.maximum_number_of_attachments = 2;
+	pCD->phenotype.mechanics.maximum_number_of_attachments = pCD->custom_data["maximum_number_of_attachments"];
 	
 	/*
 	   This builds the map of cell definitions and summarizes the setup. 
@@ -213,12 +213,12 @@ std::vector<std::string> my_coloring_function( Cell* pCell )
 		return { "orange", "black", "orange", "orange"}; 
 	}
 
-	// if( pCell->state.spring_attachments.size() == 2 )
-	// {
-	// 	return { "blue" , "black", "blue", "blue"}; 	
-	// }
+	if( pCell->state.spring_attachments.size() == 2 )
+	{
+		return { "blue" , "black", "blue", "blue"}; 	
+	}
 
-	if( pCell->state.spring_attachments.size() >= 2 )
+	if( pCell->state.spring_attachments.size() >= 3 )
 	{
 		return { "red" , "black", "red", "red"}; 	
 	}
