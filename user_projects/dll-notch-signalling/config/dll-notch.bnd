@@ -1,0 +1,29 @@
+Node VEGF {
+  logic = VEGF;
+  rate_up  = 0;
+  rate_down  = 0;
+}
+
+Node VEGFR {
+  logic = (VEGF & !NOTCH);
+  rate_up  = @logic ? 5 : 0;
+  rate_down  = @logic ? 0 : 5;
+}
+
+Node DLL {
+  logic = VEGFR;
+  rate_up  = @logic ? 5 : 0;
+  rate_down  = @logic ? 0 : 5;
+}
+
+Node DLL_neighbour {
+  logic = DLL_neighbour;
+  rate_up  = 0;
+  rate_down  = 0;
+}
+
+Node NOTCH {
+  logic = DLL_neighbour;
+  rate_up  = @logic ? 5 : 0;
+  rate_down  = @logic ? 0 : 5;
+}

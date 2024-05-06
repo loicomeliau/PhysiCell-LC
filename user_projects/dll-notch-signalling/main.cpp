@@ -74,7 +74,8 @@
 #include <fstream>
 
 #include "./core/PhysiCell.h"
-#include "./modules/PhysiCell_standard_modules.h" 
+#include "./modules/PhysiCell_standard_modules.h"
+
 // put custom code modules here! 
 
 #include "./custom_modules/custom.h" 
@@ -103,7 +104,7 @@ int main( int argc, char* argv[] )
 	{ exit(-1); }
 	
 	// copy config file to output directry 
-	system( copy_command ); 
+	(void)system( copy_command ); 
 	
 	// OpenMP setup
 	omp_set_num_threads(PhysiCell_settings.omp_num_threads);
@@ -130,7 +131,6 @@ int main( int argc, char* argv[] )
 	
 	setup_tissue();
 
-
 	/* Users typically stop modifying here. END USERMODS */ 
 	
 	// set MultiCellDS save options 
@@ -146,7 +146,6 @@ int main( int argc, char* argv[] )
 
 	char filename[1024];
 	sprintf( filename , "%s/initial" , PhysiCell_settings.folder.c_str() ); 
-	
 	save_PhysiCell_to_MultiCellDS_v2( filename , microenvironment , PhysiCell_globals.current_time ); 
 	
 	sprintf( filename , "%s/states_initial.csv", PhysiCell_settings.folder.c_str());
@@ -166,8 +165,6 @@ int main( int argc, char* argv[] )
 	
 	sprintf( filename , "%s/legend.svg" , PhysiCell_settings.folder.c_str() ); 
 	create_plot_legend( filename , cell_coloring_function ); 
-	
-	add_software_citation( "PhysiBoSS" , PhysiBoSS_Version , PhysiBoSS_DOI, PhysiBoSS_URL); 
 	
 	display_citations(); 
 	
@@ -229,18 +226,15 @@ int main( int argc, char* argv[] )
 				}
 			}
 
-			/*
-			  Custom add-ons could potentially go here. 
-			*/
-
-
 			// update the microenvironment
 			microenvironment.simulate_diffusion_decay( diffusion_dt );
 			
 			// run PhysiCell 
 			((Cell_Container *)microenvironment.agent_container)->update_all_cells( PhysiCell_globals.current_time );
 			
-			//std::cout<< "done" << std::endl;
+			/*
+			  Custom add-ons could potentially go here. 
+			*/
 			
 			PhysiCell_globals.current_time += diffusion_dt;
 		}
@@ -266,7 +260,6 @@ int main( int argc, char* argv[] )
 	
 	sprintf( filename , "%s/final.svg" , PhysiCell_settings.folder.c_str() ); 
 	SVG_plot( filename , microenvironment, 0.0 , PhysiCell_globals.current_time, cell_coloring_function );
-
 	
 	// timer 
 	

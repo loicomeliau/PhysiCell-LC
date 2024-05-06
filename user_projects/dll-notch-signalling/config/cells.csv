@@ -1,0 +1,14 @@
+x,y,z,type,volume,cycle entry,custom:GFP,custom:sample
+-190.0,-60.0,0.0,endothelial_cell
+-190.0,-50.0,0.0,endothelial_cell
+-190.0,-40.0,0.0,endothelial_cell
+-190.0,-30.0,0.0,endothelial_cell
+-190.0,-20.0,0.0,endothelial_cell
+-190.0,-10.0,0.0,endothelial_cell
+-190.0,0.0,0.0,endothelial_cell
+-190.0,10.0,0.0,endothelial_cell
+-190.0,20.0,0.0,endothelial_cell
+-190.0,30.0,0.0,endothelial_cell
+-190.0,40.0,0.0,endothelial_cell
+-190.0,50.0,0.0,endothelial_cell
+-190.0,60.0,0.0,endothelial_cell
