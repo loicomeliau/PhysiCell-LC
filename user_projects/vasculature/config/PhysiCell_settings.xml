@@ -91,7 +91,7 @@
                 </cycle>
                 <death>
                     <model code="100" name="apoptosis">
-                        <death_rate units="1/min">1.31667e-05</death_rate>
+                        <death_rate units="1/min">0.0</death_rate>
                         <phase_transition_rates units="1/min">
                             <rate start_index="0" end_index="1" fixed_duration="false">0.001938</rate>
                         </phase_transition_rates>
@@ -136,9 +136,9 @@
                     <cell_cell_repulsion_strength units="micron/min">10.0</cell_cell_repulsion_strength>
                     <relative_maximum_adhesion_distance units="dimensionless">1.25</relative_maximum_adhesion_distance>
                     <cell_adhesion_affinities>
-                        <cell_adhesion_affinity name="tip cell">1.0</cell_adhesion_affinity>
+                        <cell_adhesion_affinity name="tip cell">0.5</cell_adhesion_affinity>
                         <cell_adhesion_affinity name="stalk cell">0.5</cell_adhesion_affinity>
-                        <cell_adhesion_affinity name="mature cell">0.5</cell_adhesion_affinity>
+                        <cell_adhesion_affinity name="mature cell">1.0</cell_adhesion_affinity>
                     </cell_adhesion_affinities>
                     <options>
                         <set_relative_equilibrium_distance enabled="false" units="dimensionless">1.8</set_relative_equilibrium_distance>
@@ -214,13 +214,14 @@
                 <vegfr conserved="false" units="" description="">0.0</vegfr>
                 <active_vegfr conserved="false" units="" description="">0.0</active_vegfr>
                 <effective_vegfr conserved="false" units="" description="">0.0</effective_vegfr>
+                <is_movable conserved="false" units="boolean" description="">0</is_movable>
             </custom_data>
         </cell_definition>
         <cell_definition name="stalk cell" ID="1">
             <phenotype>
                 <cycle code="5" name="live">
                     <phase_durations units="min">
-                        <duration index="0" fixed_duration="false">7000</duration>
+                        <duration index="0" fixed_duration="false">9000</duration>
                     </phase_durations>
                 </cycle>
                 <death>
@@ -348,6 +349,7 @@
                 <vegfr conserved="false" units="" description="">0.0</vegfr>
                 <active_vegfr conserved="false" units="" description="">0.0</active_vegfr>
                 <effective_vegfr conserved="false" units="" description="">0.0</effective_vegfr>
+                <is_movable conserved="false" units="boolean" description="">0.0</is_movable>
             </custom_data>
         </cell_definition>
         <cell_definition name="tip cell" ID="2">
@@ -482,6 +484,7 @@
                 <vegfr conserved="false" units="" description="">0.0</vegfr>
                 <active_vegfr conserved="false" units="" description="">0.0</active_vegfr>
                 <effective_vegfr conserved="false" units="" description="">0.0</effective_vegfr>
+                <is_movable conserved="false" units="boolean" description="">0.0</is_movable>
             </custom_data>
         </cell_definition>
     </cell_definitions>

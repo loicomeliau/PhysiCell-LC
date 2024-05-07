@@ -88,15 +88,21 @@ void color_node(Cell* pCell);
 
 // custom functions can go here 
 
-// Intracellular update functions
-void pre_update_intracellular( Cell* pCell, Phenotype& phenotype, double dt );
-void post_update_intracellular( Cell* pCell, Phenotype& phenotype, double dt );
+// Phenotype update functions
+void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt );
+void endothelial_cell_phenotype( Cell* pCell, Phenotype& phenotype, double dt );
 
 // Custom functions
 // Default custom function
 void custom_function( Cell* pCell, Phenotype& phenotype , double dt );
+void endothelial_custom_function( Cell* pCell, Phenotype& phenotype , double dt );
 
-// Endothelial cell contact function (udpate at mechanics_dt)
+// Contact functions (udpate at mechanics_dt)
+void contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& phenoOther , double dt ); 
 void endothelial_cell_contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& phenoOther , double dt ); 
+
+// Intracellular update functions
+void pre_update_intracellular( Cell* pCell, Phenotype& phenotype, double dt );
+void post_update_intracellular( Cell* pCell, Phenotype& phenotype, double dt );
 
 #endif

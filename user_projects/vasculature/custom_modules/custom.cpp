@@ -132,7 +132,11 @@ void create_cell_types( void )
 	
 	pCD = find_cell_definition( "stalk cell"); 
 	pCD->phenotype.mechanics.maximum_number_of_attachments = pCD->custom_data["maximum_number_of_attachments"];
-	
+
+	pCD = find_cell_definition( "mature cell"); 
+	pCD->phenotype.mechanics.maximum_number_of_attachments = pCD->custom_data["maximum_number_of_attachments"];
+	pCD->is_movable = pCD->custom_data["is_movable"];
+
 	/*
 	   This builds the map of cell definitions and summarizes the setup. 
 	*/

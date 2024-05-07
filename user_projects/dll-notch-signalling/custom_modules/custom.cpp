@@ -102,7 +102,7 @@ void create_cell_types( void )
 	cell_defaults.functions.add_cell_basement_membrane_interactions = NULL; 
 	cell_defaults.functions.calculate_distance_to_membrane = NULL; 
 	
-	cell_defaults.custom_data.add_variable(parameters.strings("node_to_visualize"), "dimensionless", 0.0 ); //for paraview visualization
+	// cell_defaults.custom_data.add_variable(parameters.strings("node_to_visualize"), "dimensionless", 0.0 ); //for paraview visualization
 
 	/*
 	   This parses the cell definitions in the XML config file. 
@@ -134,13 +134,17 @@ void create_cell_types( void )
 	   This is a good place to set custom functions. 
 	*/ 
 	
-	cell_defaults.functions.update_phenotype = NULL; 
-	cell_defaults.functions.custom_cell_rule = NULL; 
-	cell_defaults.functions.contact_function = NULL; 
+	cell_defaults.functions.update_phenotype = phenotype_function; 
+	cell_defaults.functions.custom_cell_rule = custom_function; 
+	cell_defaults.functions.contact_function = contact_function; 
 
 	Cell_Definition* pCD = find_cell_definition( "endothelial_cell"); 
-	pCD->phenotype.mechanics.maximum_number_of_attachments = 2;
-	pCD->functions.custom_cell_rule = custom_function;
+	pCD->phenotype.mechanics.maximum_number_of_attachments = pCD->custom_data["maximum_number_of_attachments"];
+	pCD->functions.custom_cell_rule = endothelial_custom_function;
+	pCD->custom_data.add_variable(parameters.strings("node_to_visualize"), "dimensionless", 0.0 );
+
+	// pCD = find_cell_definition( "VEGF_secretion"); 
+	// pCD->functions.post_update_intracellular = NULL;
 	
 	/*
 	   This builds the map of cell definitions and summarizes the setup. 
@@ -212,21 +216,6 @@ void setup_tissue( void )
 	return;
 }
 
-void pre_update_intracellular( Cell* pCell, Phenotype& phenotype, double dt )
-{
-	if (PhysiCell::PhysiCell_globals.current_time >= 100.0 
-		&& pCell->phenotype.intracellular->get_parameter_value("$time_scale") == 0.0
-	){
-		pCell->phenotype.intracellular->set_parameter_value("$time_scale", 0.1);
-	}
-
-}
-
-void post_update_intracellular( Cell* pCell, Phenotype& phenotype, double dt )
-{
-	color_node(pCell);
-}
-
 std::vector<std::string> my_coloring_function( Cell* pCell )
 {
 	std::vector< std::string > output( 4 , "rgb(0,0,0)" );
@@ -268,40 +257,103 @@ void color_node(Cell* pCell){
 	pCell->custom_data[node_name] = pCell->phenotype.intracellular->get_boolean_variable_value(node_name);
 }
 
+// Phenotype update functions
+// Default phenotype function
+void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt )
+{ 
+	// O2 based update - IF oxygen used as substrate - Maybe add condition on cell cycle
+	// valid for: advanced_Ki67_cycle_model=0 / basic_Ki67_cycle_model=1 / live_cells_cycle_model=5; 
+	// if (pCell->get_microenvironment()->find_density_index( "oxygen" ) != -1)
+	// {
+	// 	update_cell_and_death_parameters_O2_based(pCell, phenotype, dt);
+	// }
+
+	return; 
+}
+
+// Prepare for endothelial cell phenotype
+void endothelial_cell_phenotype( Cell* pCell, Phenotype& phenotype, double dt )
+{ 
+	// O2 based update - IF oxygen used as substrate
+	// advanced_Ki67_cycle_model= 0 / basic_Ki67_cycle_model=1 / live_cells_cycle_model = 5; 
+	// if (pCell->get_microenvironment()->find_density_index( "oxygen" ) != -1)
+	// {
+	// 	update_cell_and_death_parameters_O2_based(pCell, phenotype, dt);
+	// }
+	
+
+	// Custom endothelial cell phenotype update
+	// ...
+
+	return; 
+}
+
 // Custom functions
 // Default custom function
 void custom_function( Cell* pCell, Phenotype& phenotype , double dt )
+{ return; } 
+
+// endothelial custom function
+void endothelial_custom_function( Cell* pCell, Phenotype& phenotype , double dt )
 {
+	#pragma omp critical
+	{
 	// Juxtacrine communication - Update of the state of DLL_neighbour
-	double DLL_neighbour_tot;
+	double dll_neighbour_tot = 0;
 	int nb_of_attachments = pCell->state.spring_attachments.size();
 
 	for( int i=0; i < nb_of_attachments; i++ )
 	{
 		Cell* pNeighbour = pCell->state.spring_attachments[i];
-		DLL_neighbour_tot = pNeighbour->phenotype.intracellular->get_boolean_variable_value("DLL");
+		dll_neighbour_tot += pNeighbour->phenotype.intracellular->get_boolean_variable_value("DLL");
 	}
 
-	pCell->custom_data["DLL_neighbour"] = DLL_neighbour_tot / nb_of_attachments;
+	pCell->custom_data["dll_neighbour"] = dll_neighbour_tot / nb_of_attachments;
 
-	std::cout << std::endl << "Number of attached cells: " << nb_of_attachments << " and total DLL_neighbour: " << DLL_neighbour_tot << std::endl;
-
+	std::cout << std::endl << "Number of attached cells: " << nb_of_attachments << " and total dll_neighbour: " << dll_neighbour_tot << std::endl;
+	}
+	
 	return;
 } 
 
+// Contact function
+// Default contact function
+void contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& phenoOther , double dt )
+{ return; } 
+
+// Endothelial cell contact function
 void endothelial_cell_contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& phenoOther , double dt )
 {
-	double head_me = pMe->custom_data["head"];
-	double head_other = pOther->custom_data["head"];
+	// FROM WORM SAMPLE PROJECT
+
+	// double head_me = pMe->custom_data["head"];
+	// double head_other = pOther->custom_data["head"];
 		
-	// make the transfer 
-	if( head_me > head_other )
-	{
-		double amount_to_transfer = dt * pMe->custom_data["transfer_rate"] 
-			* (head_me - head_other ); 
-		pMe->custom_data["head"] -= amount_to_transfer; 
-		#pragma omp critical
-		{ pOther->custom_data["head"] += amount_to_transfer; }
-	}
-	return;
+	// // make the transfer 
+	// if ( head_me > head_other )
+	// {
+	// 	double amount_to_transfer = dt * pMe->custom_data["transfer_rate"] 
+	// 		* (head_me - head_other ); 
+	// 	pMe->custom_data["head"] -= amount_to_transfer; 
+	// 	#pragma omp critical
+	// 	{ pOther->custom_data["head"] += amount_to_transfer; }
+	// }
+	// return;
 }
+
+// Intracellular update functions
+void pre_update_intracellular( Cell* pCell, Phenotype& phenotype, double dt )
+{
+	if (PhysiCell::PhysiCell_globals.current_time >= 100.0 
+		&& pCell->phenotype.intracellular->get_parameter_value("$time_scale") == 0.0
+	){
+		pCell->phenotype.intracellular->set_parameter_value("$time_scale", 0.1);
+	}
+
+}
+
+void post_update_intracellular( Cell* pCell, Phenotype& phenotype, double dt )
+{
+	color_node(pCell);
+}
+

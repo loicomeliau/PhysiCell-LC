@@ -2,7 +2,7 @@
 
     <domain>
         <x_min>-200</x_min>
-        <x_max>200</x_max>
+        <x_max>0</x_max>
         <y_min>-100</y_min>
         <y_max>100</y_max>
         <z_min>-10</z_min>
@@ -71,14 +71,14 @@
         </variable>
         <variable name="VEGF" units="dimensionless" ID="1">
             <physical_parameter_set>
-                <diffusion_coefficient units="micron^2/min">1000.0</diffusion_coefficient>
-                <decay_rate units="1/min">10.0</decay_rate>
+                <diffusion_coefficient units="micron^2/min">1000000.0</diffusion_coefficient>
+                <decay_rate units="1/min">0.001</decay_rate>
             </physical_parameter_set>
             <initial_condition units="dimensionless">0.0</initial_condition>
             <Dirichlet_boundary_condition units="dimensionless" enabled="True">0.0</Dirichlet_boundary_condition>
             <Dirichlet_options>
                 <boundary_value ID="xmin" enabled="True">10</boundary_value>
-                <boundary_value ID="xmax" enabled="True">10</boundary_value>
+                <boundary_value ID="xmax" enabled="True">0</boundary_value>
                 <boundary_value ID="ymin" enabled="False">0</boundary_value>
                 <boundary_value ID="ymax" enabled="False">0</boundary_value>
                 <boundary_value ID="zmin" enabled="False">0</boundary_value>
@@ -152,7 +152,8 @@
                     <cell_cell_repulsion_strength units="micron/min">10.0</cell_cell_repulsion_strength>
                     <relative_maximum_adhesion_distance units="dimensionless">1.25</relative_maximum_adhesion_distance>
                     <cell_adhesion_affinities>
-                        <cell_adhesion_affinity name="endothelial_cell">0.5</cell_adhesion_affinity>
+                        <cell_adhesion_affinity name="endothelial_cell">1.0</cell_adhesion_affinity>
+                        <cell_adhesion_affinity name="VEGF_secretor">0.0</cell_adhesion_affinity>
                     </cell_adhesion_affinities>
                     <options>
                         <set_relative_equilibrium_distance enabled="false" units="dimensionless">1.8</set_relative_equilibrium_distance>
@@ -202,18 +203,22 @@
                     <dead_phagocytosis_rate units="1/min">0.0</dead_phagocytosis_rate>
                     <live_phagocytosis_rates>
                         <phagocytosis_rate name="endothelial_cell" units="1/min">0.0</phagocytosis_rate>
+                        <phagocytosis_rate name="VEGF_secretor" units="1/min">0.0</phagocytosis_rate>
                     </live_phagocytosis_rates>
                     <attack_rates>
                         <attack_rate name="endothelial_cell" units="1/min">0.0</attack_rate>
+                        <attack_rate name="VEGF_secretor" units="1/min">0.0</attack_rate>
                     </attack_rates>
                     <damage_rate units="1/min">1.0</damage_rate>
                     <fusion_rates>
                         <fusion_rate name="endothelial_cell" units="1/min">0.0</fusion_rate>
+                        <fusion_rate name="VEGF_secretor" units="1/min">0.0</fusion_rate>
                     </fusion_rates>
                 </cell_interactions>
                 <cell_transformations>
                     <transformation_rates>
                         <transformation_rate name="endothelial_cell" units="1/min">0.0</transformation_rate>
+                        <transformation_rate name="VEGF_secretor" units="1/min">0.0</transformation_rate>
                     </transformation_rates>
                 </cell_transformations>
                 <intracellular type="maboss">
@@ -221,7 +226,7 @@
                     <cfg_filename>config/dll-notch.cfg</cfg_filename>
                     <initial_values>
                         <initial_value intracellular_name="VEGF">0</initial_value>
-                        <initial_value intracellular_name="DLL_neighbour">0</initial_value>
+                        <initial_value intracellular_name="NOTCH">0</initial_value>
                     </initial_values>
                     <settings>
                         <intracellular_dt>1</intracellular_dt>
@@ -238,7 +243,7 @@
                                 <smoothing>0</smoothing>
                             </settings>
                         </input>
-                        <input physicell_name="custom:DLL_neighbour" intracellular_name="DLL_neighbour">
+                        <input physicell_name="custom:dll_neighbour" intracellular_name="DLL_neighbour">
                             <settings>
                                 <action>activation</action>
                                 <threshold>0.51</threshold>
@@ -250,8 +255,185 @@
                 </intracellular>
             </phenotype>
             <custom_data>
-                <DLL_neighbour conserved="false" units="dimensionless" description="">0.0</DLL_neighbour>
+                <actin conserved="false" units="" description="">0.0</actin>
+                <vegfr conserved="false" units="" description="">0.0</vegfr>
+                <active_vegfr conserved="false" units="" description="">0.0</active_vegfr>
+                <effective_vegfr conserved="false" units="" description="">0.0</effective_vegfr>
+                <notch conserved="false" units="" description="">0.0</notch>
+                <active_notch conserved="false" units="" description="">0.0</active_notch>
+                <effective_notch conserved="false" units="" description="">0.0</effective_notch>
                 <maximum_number_of_attachments conserved="false" units="dimensionless" description="">2</maximum_number_of_attachments>
+                <dll_neighbour conserved="false" units="" description="">0.0</dll_neighbour>
+                <DLL conserved="false" units="dimensionless" description="">0.0</DLL>
+            </custom_data>
+        </cell_definition>
+        <cell_definition name="VEGF_secretor" ID="1">
+            <phenotype>
+                <cycle code="5" name="live">
+                    <phase_transition_rates units="1/min">
+                        <rate start_index="0" end_index="0" fixed_duration="false">0.0</rate>
+                    </phase_transition_rates>
+                </cycle>
+                <death>
+                    <model code="100" name="apoptosis">
+                        <death_rate units="1/min">0.0</death_rate>
+                        <phase_durations units="min">
+                            <duration index="0" fixed_duration="true">516</duration>
+                        </phase_durations>
+                        <parameters>
+                            <unlysed_fluid_change_rate units="1/min">0.05</unlysed_fluid_change_rate>
+                            <lysed_fluid_change_rate units="1/min">0</lysed_fluid_change_rate>
+                            <cytoplasmic_biomass_change_rate units="1/min">1.66667e-02</cytoplasmic_biomass_change_rate>
+                            <nuclear_biomass_change_rate units="1/min">5.83333e-03</nuclear_biomass_change_rate>
+                            <calcification_rate units="1/min">0</calcification_rate>
+                            <relative_rupture_volume units="dimensionless">2.0</relative_rupture_volume>
+                        </parameters>
+                    </model>
+                    <model code="101" name="necrosis">
+                        <death_rate units="1/min">0.0</death_rate>
+                        <phase_durations units="min">
+                            <duration index="0" fixed_duration="true">0</duration>
+                            <duration index="1" fixed_duration="true">86400</duration>
+                        </phase_durations>
+                        <parameters>
+                            <unlysed_fluid_change_rate units="1/min">0.05</unlysed_fluid_change_rate>
+                            <lysed_fluid_change_rate units="1/min">0</lysed_fluid_change_rate>
+                            <cytoplasmic_biomass_change_rate units="1/min">1.66667e-02</cytoplasmic_biomass_change_rate>
+                            <nuclear_biomass_change_rate units="1/min">5.83333e-03</nuclear_biomass_change_rate>
+                            <calcification_rate units="1/min">0</calcification_rate>
+                            <relative_rupture_volume units="dimensionless">2.0</relative_rupture_volume>
+                        </parameters>
+                    </model>
+                </death>
+                <volume>
+                    <total units="micron^3">249</total>
+                    <fluid_fraction units="dimensionless">0.75</fluid_fraction>
+                    <nuclear units="micron^3">54</nuclear>
+                    <fluid_change_rate units="1/min">0.05</fluid_change_rate>
+                    <cytoplasmic_biomass_change_rate units="1/min">0.0045</cytoplasmic_biomass_change_rate>
+                    <nuclear_biomass_change_rate units="1/min">0.0055</nuclear_biomass_change_rate>
+                    <calcified_fraction units="dimensionless">0.0</calcified_fraction>
+                    <calcification_rate units="1/min">0.0</calcification_rate>
+                    <relative_rupture_volume units="dimensionless">2</relative_rupture_volume>
+                </volume>
+                <mechanics>
+                    <cell_cell_adhesion_strength units="micron/min">0.0</cell_cell_adhesion_strength>
+                    <cell_cell_repulsion_strength units="micron/min">0.0</cell_cell_repulsion_strength>
+                    <relative_maximum_adhesion_distance units="dimensionless">1.25</relative_maximum_adhesion_distance>
+                    <cell_adhesion_affinities>
+                        <cell_adhesion_affinity name="endothelial_cell">0.0</cell_adhesion_affinity>
+                        <cell_adhesion_affinity name="VEGF_secretor">0.0</cell_adhesion_affinity>
+                    </cell_adhesion_affinities>
+                    <options>
+                        <set_relative_equilibrium_distance enabled="false" units="dimensionless">1.8</set_relative_equilibrium_distance>
+                        <set_absolute_equilibrium_distance enabled="false" units="micron">15.12</set_absolute_equilibrium_distance>
+                    </options>
+                    <attachment_elastic_constant units="1/min">0.01</attachment_elastic_constant>
+                    <attachment_rate units="1/min">0.0</attachment_rate>
+                    <detachment_rate units="1/min">0.0</detachment_rate>
+                </mechanics>
+                <motility>
+                    <speed units="micron/min">0.0</speed>
+                    <persistence_time units="min">1.0</persistence_time>
+                    <migration_bias units="dimensionless">0.0</migration_bias>
+                    <options>
+                        <enabled>false</enabled>
+                        <use_2D>true</use_2D>
+                        <chemotaxis>
+                            <enabled>false</enabled>
+                            <substrate>oxygen</substrate>
+                            <direction>1</direction>
+                        </chemotaxis>
+                        <advanced_chemotaxis>
+                            <enabled>false</enabled>
+                            <normalize_each_gradient>false</normalize_each_gradient>
+                            <chemotactic_sensitivities>
+                                <chemotactic_sensitivity substrate="oxygen">0.0</chemotactic_sensitivity>
+                                <chemotactic_sensitivity substrate="VEGF">0.0</chemotactic_sensitivity>
+                            </chemotactic_sensitivities>
+                        </advanced_chemotaxis>
+                    </options>
+                </motility>
+                <secretion>
+                    <substrate name="oxygen">
+                        <secretion_rate units="1/min">0.0</secretion_rate>
+                        <secretion_target units="substrate density">1.0</secretion_target>
+                        <uptake_rate units="1/min">0.0</uptake_rate>
+                        <net_export_rate units="total substrate/min">0.0</net_export_rate>
+                    </substrate>
+                    <substrate name="VEGF">
+                        <secretion_rate units="1/min">100</secretion_rate>
+                        <secretion_target units="substrate density">100</secretion_target>
+                        <uptake_rate units="1/min">0.0</uptake_rate>
+                        <net_export_rate units="total substrate/min">0.0</net_export_rate>
+                    </substrate>
+                </secretion>
+                <cell_interactions>
+                    <dead_phagocytosis_rate units="1/min">0.0</dead_phagocytosis_rate>
+                    <live_phagocytosis_rates>
+                        <phagocytosis_rate name="endothelial_cell" units="1/min">0.0</phagocytosis_rate>
+                        <phagocytosis_rate name="VEGF_secretor" units="1/min">0.0</phagocytosis_rate>
+                    </live_phagocytosis_rates>
+                    <attack_rates>
+                        <attack_rate name="endothelial_cell" units="1/min">0.0</attack_rate>
+                        <attack_rate name="VEGF_secretor" units="1/min">0.0</attack_rate>
+                    </attack_rates>
+                    <damage_rate units="1/min">1.0</damage_rate>
+                    <fusion_rates>
+                        <fusion_rate name="endothelial_cell" units="1/min">0.0</fusion_rate>
+                        <fusion_rate name="VEGF_secretor" units="1/min">0.0</fusion_rate>
+                    </fusion_rates>
+                </cell_interactions>
+                <cell_transformations>
+                    <transformation_rates>
+                        <transformation_rate name="endothelial_cell" units="1/min">0.0</transformation_rate>
+                        <transformation_rate name="VEGF_secretor" units="1/min">0.0</transformation_rate>
+                    </transformation_rates>
+                </cell_transformations>
+                <intracellular type="maboss">
+                    <bnd_filename>config/dll-notch.bnd</bnd_filename>
+                    <cfg_filename>config/dll-notch.cfg</cfg_filename>
+                    <initial_values>
+                        <initial_value intracellular_name="VEGF">0</initial_value>
+                        <initial_value intracellular_name="NOTCH">0</initial_value>
+                    </initial_values>
+                    <settings>
+                        <intracellular_dt>1</intracellular_dt>
+                        <time_stochasticity>0.5</time_stochasticity>
+                        <scaling>1.0</scaling>
+                        <start_time>0.0</start_time>
+                        <inheritance global="False" />
+                    </settings>
+                    <mapping>
+                        <input physicell_name="VEGF" intracellular_name="VEGF">
+                            <settings>
+                                <action>activation</action>
+                                <threshold>1</threshold>
+                                <smoothing>5</smoothing>
+                            </settings>
+                        </input>
+                        <input physicell_name="custom:dll_neighbour" intracellular_name="DLL_neighbour">
+                            <settings>
+                                <action>activation</action>
+                                <threshold>0.49</threshold>
+                                <inact_threshold>0.51</inact_threshold>
+                                <smoothing>5</smoothing>
+                            </settings>
+                        </input>
+                    </mapping>
+                </intracellular>
+            </phenotype>
+            <custom_data>
+                <actin conserved="false" units="" description="">0.0</actin>
+                <vegfr conserved="false" units="" description="">0.0</vegfr>
+                <active_vegfr conserved="false" units="" description="">0.0</active_vegfr>
+                <effective_vegfr conserved="false" units="" description="">0.0</effective_vegfr>
+                <notch conserved="false" units="" description="">0.0</notch>
+                <active_notch conserved="false" units="" description="">0.0</active_notch>
+                <effective_notch conserved="false" units="" description="">0.0</effective_notch>
+                <maximum_number_of_attachments conserved="false" units="dimensionless" description="">2</maximum_number_of_attachments>
+                <dll_neighbour conserved="false" units="" description="">0.0</dll_neighbour>
+                <DLL conserved="false" units="dimensionless" description="">0.0</DLL>
             </custom_data>
         </cell_definition>
     </cell_definitions>
